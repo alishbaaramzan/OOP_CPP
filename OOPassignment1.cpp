@@ -18,7 +18,7 @@ enum grade{
 struct address{
     int house_no;
     int street_no;
-    char city[50];
+    string city;
 };
 // This structure serves as a template for storing basic personal information of any person
 struct Person{
@@ -27,11 +27,19 @@ struct Person{
     address Address;
     string level;
 };
+// This structure stores the grades of a particular course taken by a student
+struct Grade{
+    char Std_grade[2];
+    int marks;
+    float gpa;
+};
+
 //This structure stores information of a student
 struct Student{
     Person Std_info;
     int roll_no;
     string Std_Dept;
+    Grade grade;
 };
 
 // This structures stores the list of students (every student has their complete data)
@@ -442,7 +450,29 @@ struct TeachersList{
     }
     }
     }
-
+    // This function shows the details of a particular teacher
+    void showTeacherDetails(){
+        string name;
+        int index;
+        cout << "Enter your name: ";
+        cin >> name;
+        for(int i = 0; i < number_of_teachers; i++){
+            if(list[i].Teacher_info.name == name){
+                index = i;
+            }
+        }
+        // Now displaying the details of the teacher
+        cout << "Name of teacher: "<< list[index].Teacher_info.name << endl;
+        cout << "Teacher's age: "<< list[index].Teacher_info.age << endl;
+        cout << "Teacher's address: " << endl;
+        cout << list[index].Teacher_info.Address.house_no << endl;
+        cout << list[index].Teacher_info.Address.street_no << endl;
+        cout << list[index].Teacher_info.Address.city << endl;
+        cout << "Teacher's level of education: " << list[index].Teacher_info.level << endl;
+        cout << "Teacher's salary: "<< list[index].salary << endl;
+        cout << "Teacher's department: "<< list[index].Teacher_Dept << endl;
+        cout << endl << endl;
+    }
 };
 // This structure stores the basic information of the admin
 struct Admin{
@@ -548,6 +578,37 @@ struct ListofCourses{
         }
     }
     }
+    // This function allocates a course to a teacher
+    void allocateCoursetoTeacher(){
+        string course_code;
+        int index;
+        cout << "Enter the course code to be allocated: ";
+        cin >> course_code;
+        for(int i = 0; i < number_of_courses; i++){
+            if(list[i].course_code==course_code){
+                index = i;
+            }
+        }
+        cout << endl;
+        // Now alocating the course at "index" to a new teacher
+        cout << "For the course " << list[index].course_code <<":" << endl;
+        cout << "Add new teacher: ";
+        cin >> list[index].course_teacher;
+    }
+    // This function deallocates a course from a teacher
+    void deallocateCoursefromTeacher(){
+        string course_code;
+        int index;
+        cout << "Enter the course code to be deallocated: ";
+        cin >> course_code;
+        for(int i = 0; i < number_of_courses; i++){
+            if(list[i].course_code==course_code){
+                index = i;
+            }
+        }
+        // Now deallocating the course at "index" to a new teacher
+        list[index].course_teacher="";
+    }
     // This functions un-enrolls a student from a specific course
     void un_enrollStudent(){
         string course_code;
@@ -585,16 +646,105 @@ struct ListofCourses{
         }
         delete [] temp_c;
     }
+    // This function shows all the allocated courses to a particular teacher
+    void showAllocatedCoursestoTeacher(){
+        string name;
+        cout << "Enter your name:";
+        cin >> name;
+        // looping through all the courses to see which one belongs to the required teacher
+        for(int i = 0; i < number_of_courses; i++){
+            if(list[i].course_teacher == name){
+                cout << list[i].course << endl;
+                cout << list[i].course_code << endl;
+                cout << endl;
+            }
+        }
+        cout << endl;
+    }
+    // This functions shows the list of students taking the courses allocated to a particular teacher
+    void listOfStudentstakingCourses(){
+        string name;
+        cout << "Enter your name: "; // asking the name of the teacher
+        cin >> name;
+        // looping through all the courses to fetch the courses the teacher teaches
+        for(int i = 0; i < number_of_courses; i++){
+            if(list[i].course_teacher == name){
+                cout << list[i].course << endl;
+                cout << list[i].course_code << endl;
+                for(int j = 0; j < list[i].enrolled; j++){
+                    cout << list[i].enrolled_students[j].roll_no << endl;
+                }
+            }
+        }
+        cout << endl;
+    }
+    // This function gives grade to particular student
+    void giveGrade(){
+        string name;
+        string course_code;
+        bool check = false;
+        int index;
+        cout << "Enter your name: ";
+        cin >> name;
+        cout << "Enter the course code: ";
+        cin >> course_code;
+        for(int i = 0; i < number_of_courses; i++){
+            if(list[i].course_code==course_code){
+                    index = i;
+            }
+            if(list[i].course_teacher == name){
+                check = true; // to check if the teacher entered the course they have been allocated
+            }
+        }
+        if(check){
+            // Giving grade to individual students, one by one
+            cout << list[index].enrolled << " students are enrolled in the course" << endl;
+            for(int i = 0; i < list[index].enrolled; i++){
+                cout << "Student " << list[index].enrolled_students[i].roll_no << endl;
+                cout << "Grade: ";
+                cin >> list[index].enrolled_students[i].grade.Std_grade;
+                cout << "Marks: ";
+                cin >> list[index].enrolled_students[i].grade.marks;
+                cout << "GPA: ";
+                cin >> list[index].enrolled_students[i].grade.gpa;
+            }
+        }
+    }
+    // This function displays the top students in a certain course
+    void TopStudent(){
+        string course_code;
+        int index;
+        cout << "Enter the course code: ";
+        cin >> course_code;
+        // looping through the list of courses to see where the course lies
+        for(int i = 0; i < number_of_courses; i++){
+            if(list[i].course_code == course_code)
+                index = i;
+        }
+        int top_student = 0;
+        int top_index;
+        for(int i = 0; i < list[index].enrolled; i++){
+            if(list[index].enrolled_students[i].grade.gpa>top_student)
+                top_index = i;
+        }
+        // Displaying the top student
+        cout << " The top student in the course is: ";
+        cout << list[index].enrolled_students[top_index].Std_info.name << "  " << list[index].enrolled_students[top_index].roll_no << endl;
+    }
+    // This function sorts the students based on their grade in a particular course
+    void GradeviseDivision(){
+        string course_name;
+        int index;
+        for(int i = 0; i < number_of_courses; i++){
+            if(list[i].course_code == course_name)
+                index = i;
+        }
+        
+    }
 };
-// This structure stores the grades of a particular course taken by a student
-struct Grade{
-    char Std_grade[2];
-    int marks;
-    float gpa;
-};
-
 // This functions defines the interface for user
 void Interface(char x){
+    // Admins interface
     if(x=='a'){
         cout << "Admin's Terminal" << endl;
         cout << "1.Add a new student in system" << endl;//done
@@ -610,19 +760,25 @@ void Interface(char x){
         cout << "11.Remove course from the system" << endl; // done
         cout << "12.Update course detail" << endl; // done
         cout << "13.Check record of all courses" << endl; // done
-        cout << "14.Allocate a course to teacher" << endl; 
-        cout << "15.De-allocate a course from teacher" << endl;
+        cout << "14.Allocate a course to teacher" << endl;  // done
+        cout << "15.De-allocate a course from teacher" << endl; // done
+        cout << "16.Exit" << endl;
+    }
+    // Teacher's interface
+    if(x=='t'){
+        cout << "1.Check my details in the system" << endl; // done
+        cout << "2.See the list of allocated courses" << endl; // done
+        cout << "3.List of students in the allocated courses" << endl; // done
+        cout << "4.Assign marks and grades to students" << endl;// done
+        cout << "5.See the top student" << endl; // done
+        cout << "6.Grade wise division of students in the allocated courses" << endl;
+        cout << "7.Exit" << endl;
     }
 }
 // This function performs the tasks for the admin
-void AdminDuties(){
-    StudentList AdminsListOfStudents;
-    AdminsListOfStudents.number_of_students=0; 
-    ListofCourses AdminsListOfCourses;
-    AdminsListOfCourses.number_of_courses=0;
-    TeachersList AdminsListofTeachers;
-    AdminsListofTeachers.number_of_teachers = 0;
-    int x;
+void AdminDuties(StudentList &AdminsListOfStudents, ListofCourses &AdminsListOfCourses, TeachersList &AdminsListofTeachers){
+    int x = 0;
+    do{
     Interface('a'); // Prints the options availabe to the admin
     cin >> x;
     switch(x){
@@ -665,30 +821,75 @@ void AdminDuties(){
         case 13:
             AdminsListOfCourses.courseRecord();
             break;
+        case 14:
+            AdminsListOfCourses.allocateCoursetoTeacher();
+            break;
+        case 15:
+            AdminsListOfCourses.deallocateCoursefromTeacher();
+            break;
+        case 16:
+            break;
+        default:
+            break;
+    }
+    }while(x!=16);
+    
+}
+// This function performs the tasks for the teacher
+void TeacherDuties(TeachersList &AdminsListofTeachers, ListofCourses &AdminsListOfCourses){
+    int x = 0;
+    do{
+    Interface('t');
+    cin >> x;
+    switch(x){
+        case 1:
+            AdminsListofTeachers.showTeacherDetails();
+            break;
+        case 2:
+            AdminsListOfCourses.showAllocatedCoursestoTeacher();
+            break;
+        case 3:
+            AdminsListOfCourses.listOfStudentstakingCourses();
+            break;
+        case 4:
+            AdminsListOfCourses.giveGrade();
+            break;
+        case 5:
+            AdminsListOfCourses.TopStudent();
+            break;
         
-
-
-
+        
+            
 
     }
+    }while(x!=7);
 }
 int main(){
+    StudentList AdminsListOfStudents;
+    AdminsListOfStudents.number_of_students=0; 
+    ListofCourses AdminsListOfCourses;
+    AdminsListOfCourses.number_of_courses=0;
+    TeachersList AdminsListofTeachers;
+    AdminsListofTeachers.number_of_teachers = 0;
     int user;
-    cout << "Choose the category:\n1.Admin\n2.Teacher\n3.Student\n";
+    do{
+    cout << "Choose the category:\n1.Admin\n2.Teacher\n3.Student\n4.Exit\n";
     cin >> user;
     switch(user){
         case 1:
-            AdminDuties();
+            AdminDuties(AdminsListOfStudents, AdminsListOfCourses, AdminsListofTeachers);
             break;
         case 2:
-           // TeacherDuties();
+            TeacherDuties(AdminsListofTeachers, AdminsListOfCourses);
             break;
         case 3:
            // StudentDuties();
+            break;
+        case 4:
             break;
         default:
             cout << "Sorry, can't help" << endl;
             break;
     }
-
+    }while(user!=4);
 }
