@@ -309,9 +309,9 @@ struct StudentList{
         cout << "Student's name: "<<  list[index].Std_info.name << endl;
         cout << "Student's age: "<< list[index].Std_info.age << endl;
         cout << "Student's address: " << endl;
-        cout << list[index].Std_info.address.house_no << endl;
-        cout << list[index].Std_info.address.street_no << endl;
-        cout << list[index].Std_info.address.city << endl;
+        cout <<"House no# " <<  list[index].Std_info.address.house_no << endl;
+        cout <<"Street no# " <<  list[index].Std_info.address.street_no << endl;
+        cout << "City# " << list[index].Std_info.address.city << endl;
         cout << "Student's education level: "<< list[index].Std_info.level << endl;
         cout << "Student's Roll No: "<< list[index].roll_no << endl;
         cout << "Student's department: "<< list[index].Std_Dept << endl;
@@ -560,15 +560,20 @@ struct TeachersList{
     void showTeacherDetails(){
         string name;
         int index;
+        bool check = false;
         cout << "Enter your name: ";
-        cin >> name;
+        cin.ignore();
+        getline(cin,name);
         for(int i = 0; i < number_of_teachers; i++){
             if(list[i].Teacher_info.name == name){
                 index = i;
+                check = true;
+                break;
             }
         }
 
         // Now displaying the details of the teacher
+        if(check){
         cout << "Name of teacher: "<< list[index].Teacher_info.name << endl;
         cout << "Teacher's age: "<< list[index].Teacher_info.age << endl;
         cout << "Teacher's address: " << endl;
@@ -579,6 +584,9 @@ struct TeachersList{
         cout << "Teacher's salary: "<< list[index].salary << endl;
         cout << "Teacher's department: "<< list[index].Teacher_Dept << endl;
         cout << endl << endl;
+        }
+        else
+            cout << "No such teacher exists in the system" << endl << endl;
     }
 };
 
@@ -838,6 +846,7 @@ struct ListofCourses{
             if(list[index].enrolled_students[i].roll_no==roll_no){
                 index2 = i;
                 check2 = true;
+                cout << list[index].enrolled_students[i].roll_no << "lies " << i << endl;
                 break;
             }
         }
@@ -873,6 +882,7 @@ struct ListofCourses{
     // This function shows all the allocated courses to a particular teacher
     void showAllocatedCoursestoTeacher(){
         string name;
+        bool check = false;
         cout << "Enter your name:";
         cin.ignore();
         getline(cin,name);
@@ -885,12 +895,14 @@ struct ListofCourses{
                 cout << endl;
             }
         }
-        cout << endl;
+        if(!check)
+            cout << "No courses have been allocatecd yet" << endl << endl;
     }
 
     // This functions shows the list of students taking the courses allocated to a particular teacher
     void listOfStudentstakingCourses(){
         string name;
+        bool check = false;
         cout << "Enter your name: "; // asking the name of the teacher
         cin.ignore();
         getline(cin,name);
@@ -902,10 +914,12 @@ struct ListofCourses{
                 cout << list[i].course_code << endl;
                 for(int j = 0; j < list[i].enrolled; j++){
                     cout << list[i].enrolled_students[j].roll_no << endl;
+                    check = true;
                 }
             }
         }
-        cout << endl;
+        if(!check)
+            cout << "No students have enrolled in any course allocated to you" << endl << endl;
     }
 
     // This function gives grade to particular student
@@ -953,44 +967,58 @@ struct ListofCourses{
     void TopStudent(){
         string course_code;
         int index;
+        bool check1 = false;
         cout << "Enter the course code: ";
         cin.ignore();
         getline(cin,course_code);
 
         // looping through the list of courses to see where the course lies
         for(int i = 0; i < number_of_courses; i++){
-            if(list[i].course_code == course_code)
+            if(list[i].course_code == course_code){
                 index = i;
+                check1 = true;
+            }
         }
+        
+        if(check1){
         int top_student = 0;
         int top_index;
         for(int i = 0; i < list[index].graded; i++){
-            if(list[index].graded_students[i].grade.gpa > top_student)
+            if(list[index].graded_students[i].grade.gpa > top_student){
                 top_index = i;
+                top_student = list[index].graded_students[i].grade.gpa;
+            }
         }
 
         // Displaying the top student
         cout << " The top student in the course is: ";
         cout << list[index].graded_students[top_index].Std_info.name << "  " << list[index].enrolled_students[top_index].roll_no << endl;
+        }
+        else
+            cout << "No such course exists in the system" << endl << endl;
+
     }
 
     // This function sorts the students based on their grade in a particular course
     void GradeviseDivision(){
-        string course_name;
+        string course_code;
         int index;
-        cout << "Course name: ";
+        bool check = false;
+        cout << "Course code: ";
         cin.ignore();
-        getline(cin,course_name);
+        getline(cin,course_code);
 
         // looping the entire list of courses to find the index of the required one
         for(int i = 0; i < number_of_courses; i++){
-            if(list[i].course_code == course_name){
+            if(list[i].course_code == course_code){
+                check = true;
                 index = i;
                 break;
             }
         }
 
         //Now sorting the array of graded students 
+        if(check){
         for(int i = 0; i < list[index].graded; i++){
                 for(int j = 0; j < list[index].graded - i; j++){
                     if(list[index].graded_students[j].grade.gpa < list[index].graded_students[j+1].grade.gpa){
@@ -1006,6 +1034,9 @@ struct ListofCourses{
         for(int i = 0; i < list[index].graded; i++){
             cout << list[index].graded_students[i].roll_no << "   " << list[index].graded_students[i].grade.gpa << endl;
         }
+        }
+        else
+            cout << "No such course exists in the system " << endl << endl;
     }
 
     // This function allows students to enroll any available course
@@ -1390,4 +1421,3 @@ int main(){
 capitialize structure names
 put break in index waly loops
 */
-
