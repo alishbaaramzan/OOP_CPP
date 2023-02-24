@@ -1,3 +1,5 @@
+// This code serves as a database for an educational institute
+
 #include <iostream>
 using namespace std;
 
@@ -1411,13 +1413,15 @@ int main(){
     }
     }while(user!=4);
 
+    // deallocating all the dynamically created arrays
     delete [] AdminsListOfCourses.list;
     delete [] AdminsListOfStudents.list;
     delete [] AdminsListofTeachers.list;
+    delete [] AdminsListOfCourses.list->enrolled_students;
+    delete [] AdminsListOfCourses.list->graded_students;
+    delete [] AdminsListOfCourses.list->dropped_students;
+
 
     return 0;
 }
-/*
-capitialize structure names
-put break in index waly loops
-*/
+
