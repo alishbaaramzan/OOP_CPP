@@ -26,23 +26,23 @@ class Piece{
          locationY = j;
          isKing = check;
     }
-    bool checkmoveisvalidhuman(char arr[8][8]){
+    bool checkmoveisvalidhuman(char arr[8][8], char t){
         if(isKing){
             if(arr[locationX-1][locationY-1]=='D' || arr[locationX-1][locationY+1]=='D' || arr[locationX+1][locationY-1]=='D' || arr[locationX+1][locationY+1]=='D' )
                 return true;
         }
-        else if(arr[locationX-1][locationY-1]=='D' || arr[locationX-1][locationY+1]=='D' || (arr[locationX-1][locationY-1]!=type && arr[locationX-1][locationY-1]!=' ') || (arr[locationX-1][locationY+1]!=type && arr[locationX-1][locationY+1]!=' ')){
+        else if(arr[locationX-1][locationY-1]=='D' || arr[locationX-1][locationY+1]=='D' || arr[locationX-1][locationY-1]==t || arr[locationX-1][locationY+1]==t ){
                 return true;
             }
         else 
             return false;
     }
-     bool checkmoveisvalidcomp(char arr[8][8]){
+     bool checkmoveisvalidcomp(char arr[8][8], char t){
         if(isKing){
             if(arr[locationX-1][locationY-1]=='D' || arr[locationX-1][locationY+1]=='D' || arr[locationX+1][locationY-1]=='D' || arr[locationX+1][locationY+1]=='D' )
                 return true;
         }
-        else if(arr[locationX+1][locationY-1]=='D' || arr[locationX+1][locationY+1]=='D' || (arr[locationX+1][locationY-1]!=type && arr[locationX+1][locationY-1]!=' ') || (arr[locationX+1][locationY+1]!=type && arr[locationX+1][locationY-1]!=' ')){
+        else if(arr[locationX+1][locationY-1]=='D' || arr[locationX+1][locationY+1]=='D' || arr[locationX+1][locationY-1]==t || arr[locationX+1][locationY+1]==t ){
                 return true;
             }
         else
@@ -338,7 +338,7 @@ Players p;
             }
         }
         //Now checking if the required piece is eligible to move
-        if(p.humanpieces[index].checkmoveisvalidhuman(arr)){
+        if(p.humanpieces[index].checkmoveisvalidhuman(arr, p.computerpieces[0].type)){
             char dir;
             cout << "Do you wanna move forward right or forward left\nType 'r' or 'l'\n";
             cin >> dir;
@@ -346,7 +346,6 @@ Players p;
             // making the individual piece move i.e. calling the function from Piece class
             if(dir=='r'){
                 p.takeMoveHuman(arr,'r',index);
-                cout << "move has been taken" << endl;
             }
             else if(dir=='l'){
                 p.takeMoveHuman(arr,'l',index);
@@ -376,20 +375,16 @@ Players p;
         if(p.compieces>0){
         do{
         int index = rand()% p.compieces;
-        cout << index << " has been selected" << endl;
 
          // Now checking if the required piece is eligible to move
-        if(p.computerpieces[index].checkmoveisvalidcomp(arr)){
+        if(p.computerpieces[index].checkmoveisvalidcomp(arr, p.humanpieces[0].type)){
             check = false;
-            cout << "the piece can move" << endl;
             int dir = rand()%2;
             if(dir==0 ){
                 p.takeMoveComputer(arr,'r',index);
-                cout << "computer moved" << endl;
             }
             else if(dir==1){
                 p.takeMoveComputer(arr,'l',index);
-                cout << "computer moved" << endl;
             }
             check = false;
         }
@@ -417,9 +412,7 @@ void playgame(Game &game, char arr[8][8]){
     bool check1=true, check2 = true; // check one for human move and two for computer move
     while(check1 && check2){
         check1 = game.movehuman(arr);
-        if(check1) cout << "human has moved" << endl;
         check2 = game.movecomputer(arr); 
-        if(check2) cout << "Computer has moved" << endl;
 
         displayBoard(arr);
     }
