@@ -27,7 +27,7 @@ int main(){
     }
     // deallocating memory of the first array
     delete [] arr1;
-
+ 
     // Now asking the user for remaining values
     cout << "Enter " << max_size - min_size << " more values:\n";
     for(int i = min_size; i < max_size; i++){
